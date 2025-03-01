@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Countdown</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4, #fad0c4, #ffdde1);
+            background-size: 400% 400%;
+            animation: gradientBG 10s ease infinite;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 400px;
+            backdrop-filter: blur(10px);
+            animation: fadeIn 1s ease-in-out;
+        }
+        h2 {
+            color: #fff;
+            font-size: 26px;
+            margin-bottom: 15px;
+        }
+        input, button {
+            margin: 10px 0;
+            padding: 12px;
+            font-size: 16px;
+            width: 100%;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+        }
+        input {
+            border: 1px solid #ccc;
+            background: rgba(255, 255, 255, 0.8);
+        }
+        button {
+            background: linear-gradient(135deg, #ff6b6b, #ff4757);
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: linear-gradient(135deg, #d64545, #e74c3c);
+        }
+        #countdown {
+            font-size: 28px;
+            font-weight: bold;
+            color: #fff;
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🎉 Event Countdown Timer 🎊</h2>
+        <label for="event-name">Enter Event Name:</label>
+        <input type="text" id="event-name" placeholder="Event Name">
+        <label for="event-date">Select Event Date & Time:</label>
+        <input type="datetime-local" id="event-date">
+        <button onclick="startCountdown()">Start Countdown</button>
+        <div id="countdown"></div>
+    </div>
+
+    <script>
+        let countdownInterval;
+
+        function startCountdown() {
+            clearInterval(countdownInterval);
+            let eventName = document.getElementById('event-name').value;
+            let eventDate = new Date(document.getElementById('event-date').value).getTime();
+            if (isNaN(eventDate) || eventName.trim() === "") {
+                alert("Please enter a valid event name and date.");
+                return;
+            }
+
+            countdownInterval = setInterval(function () {
+                let now = new Date().getTime();
+                let timeLeft = eventDate - now;
+
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById("countdown").innerHTML = `🎆 ${eventName} has started! 🎇`;
+                    document.getElementById("countdown").style.color = "#28a745";
+                    document.getElementById("countdown").style.fontSize = "32px";
+                    document.getElementById("countdown").style.background = "#d4edda";
+                    showPopup(eventName);
+                    return;
+                }
+
+                let days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                let hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                let minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                let seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+                document.getElementById("countdown").innerHTML = 
+                    `<span>${days}d</span> : <span>${hours}h</span> : <span>${minutes}m</span> : <span>${seconds}s</span>`;
+            }, 1000);
+        }
+
+        function showPopup(eventName) {
+            let popup = document.createElement("div");
+            popup.style.position = "fixed";
+            popup.style.top = "50%";
+            popup.style.left = "50%";
+            popup.style.transform = "translate(-50%, -50%)";
+            popup.style.background = "rgba(255, 255, 255, 0.9)";
+            popup.style.padding = "20px";
+            popup.style.borderRadius = "10px";
+            popup.style.boxShadow = "0px 10px 20px rgba(0, 0, 0, 0.2)";
+            popup.style.zIndex = "1000";
+            popup.style.fontSize = "20px";
+            popup.innerHTML = `<strong>${eventName} has started! 🎉</strong>`;
+            
+            document.body.appendChild(popup);
+            setTimeout(() => popup.remove(), 3000);
+        }
+    </script>
+</body>
+</html>
